@@ -23,7 +23,6 @@ public class UploadInfo {
 
     @Test
     public void test(){
-        UploadInfo a = new UploadInfo();
 
     }
 }

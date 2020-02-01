@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/FileUpload?useUnicode=true&characterEncoding=utf-8&useLegacyDatetimeCode=false&serverTimezone=UTC
+    password: 1234
+    username: root
+    hikari:
+      # 最小空闲5
+      minimum-idle: 5
+      # 空闲超时3分钟断开
+      idle-timeout: 180000
+      # 最大连接池连接数量：10
+      maximum-pool-size: 10
+
+
+  jpa:
+    #database-platform: com.yang.blog.util.MysqlConfig
+    hibernate:
+      ddl-auto: update #update会根据类中的结构修改数据库中表的结构
+    show-sql: true #在控制台输出sql语句
+    #database-platform: org.hibernate.dialect.MySQLDialect
+logging:
+  level:
+    root: info
+    com.yang: debug
+  file:
+    name: log/blog-dev.log
