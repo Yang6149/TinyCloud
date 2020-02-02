@@ -33,14 +33,7 @@ public class ImageUploadController {
     @PostMapping("/ImageUpload")
     public void Upload(@RequestParam("file")MultipartFile file) throws IOException {
         //这里不设置的话，默认保存在项目的根目录
-        String filePath = file.getOriginalFilename();
-        File filename = new File("repo",filePath);
 
-        logger.info("保存路径为{}",filename.getAbsolutePath());
-        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filename));
-        outputStream.write(file.getBytes());
-        outputStream.flush();
-        outputStream.close();
 
     }
 
