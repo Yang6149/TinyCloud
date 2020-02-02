@@ -38,17 +38,6 @@ public class ImageUploadController {
     }
 
 
-    @RequestMapping("/download")
-    public ResponseEntity download() throws IOException {
-        FileSystemResource file = new FileSystemResource("图片1.png");
-        HttpHeaders headers = new HttpHeaders();
-        //在响应头中添加这个，设置下载文件默认的名称
-        headers.add("Content-Disposition","attachment");
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(file.contentLength())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))// 这个属性表示相应的内容是通过字节流的方式进行传输的
-                .body(new InputStreamResource(file.getInputStream()));
-    }
+
 
 }

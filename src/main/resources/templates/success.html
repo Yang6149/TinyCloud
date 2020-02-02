@@ -10,21 +10,23 @@
 <h3>主界面</h3>
 <div><a href="/lastPath" th:if="${deep}!=0">返回上一级</a></div>
 <div class="ui attached segment">
+    <p>目录</p>
     <div class="ui padded vertical segment m-padded-tb-large" th:each="directory : ${directorys}">
         <!--mobile reversed反序-->
         <div class="ui middle aligned grid mobile reversed stackable" >
             <div class="eleven wide column">
-                <p>目录</p>
+
                 <h3><a href="#" th:href="@{/index/childDir/{name}(name=${directory.name})}"  class="m-black" th:text="${directory.name}">庐山旅行记录-江西</a></h3>
             </div>
         </div>
     </div>
+    <p>文件</p>
     <div class="ui padded vertical segment m-padded-tb-large" th:each="file : ${files}">
         <!--mobile reversed反序-->
         <div class="ui middle aligned grid mobile reversed stackable" >
             <div class="eleven wide column">
-                <p>文件</p>
-                <h3><a href="#" th:href="@{/index}" target="_blank" class="m-black" th:text="${file.getName()}">庐山旅行记录-江西</a></h3>
+
+                <h3><a href="#" th:href="@{/download/{name}(name=${file.name})}" target="_blank" class="m-black" th:text="${file.getName()}">庐山旅行记录-江西</a></h3>
             </div>
         </div>
     </div>

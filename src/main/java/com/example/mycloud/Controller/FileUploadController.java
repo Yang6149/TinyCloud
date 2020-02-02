@@ -4,12 +4,14 @@ import com.example.mycloud.Util.PathUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -34,6 +36,22 @@ public class FileUploadController {
         outputStream.flush();
         outputStream.close();
         return "redirect:index";
+    }
+
+
+
+    @GetMapping("/download/{name}")
+    //@RequestMapping("/download")
+    public ResponseEntity download(@PathVariable("name")String name ,HttpSession session ) throws IOException {
+        FileSystemResource file = new FileSystemResource(session.getAttribute("curPath")+File.separator+name);
+        HttpHeaders headers = new HttpHeaders();
+        //在响应头中添加这个，设置下载文件默认的名称
+        headers.add("Content-Disposition","attachment");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.contentLength())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))// 这个属性表示相应的内容是通过字节流的方式进行传输的
+                .body(new InputStreamResource(file.getInputStream()));
     }
     @Test
     public void test(){
