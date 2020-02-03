@@ -1,8 +1,11 @@
 package com.example.mycloud.Controller;
 
+import com.example.mycloud.Model.FileBasic;
 import com.example.mycloud.Util.PathUtil;
+import com.example.mycloud.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,8 @@ import java.util.Stack;
 @Controller
 public class Hello {
     Logger logger = LoggerFactory.getLogger(FileUploadController.class);
+    @Autowired
+    FileService fileService;
     @GetMapping("/index")
     public String index(HttpSession session, Model model){
         if (session.getAttribute("curPath")==null){
@@ -26,12 +31,11 @@ public class Hello {
             Stack stack = new Stack<>();
             session.setAttribute("stack",stack);
             stack.add(init);
-
         }
-        logger.info("当前线程id为:{}",Thread.currentThread().getId());
         logger.info(session.getAttribute("stack").toString());
         File curPath= (File) session.getAttribute("curPath");
-        List<List<File>>list = PathUtil.getChildDirectoryAndFile(curPath);
+        List<List<FileBasic>>list = fileService.getAllDisp(curPath);
+        logger.info(list.get(0).toString());
         model.addAttribute("directorys",list.get(0));
         model.addAttribute("files",list.get(1));
         model.addAttribute("stack",session.getAttribute("stack"));
@@ -74,9 +78,7 @@ public class Hello {
     public String mkdir(String dir,HttpSession session) throws IOException {
         File cur = (File) session.getAttribute("curPath");
         File newfile = new File(cur,dir);
-        if (!newfile.exists()){
-            newfile.mkdir();
-        }
+        fileService.mkdir(newfile);
         return "redirect:index";
     }
 

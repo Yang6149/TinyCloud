@@ -34,16 +34,16 @@
     </tr></thead><tbody>
     <tr th:each="directory : ${directorys}">
         <td class="">
-            <i class="folder icon"></i><a class="item" href="#" th:href="@{/index/childDir/{name}(name=${directory.name})}"   th:text="${directory.name}">庐山旅行记录-江西</a>
+            <i class="folder icon"></i><a class="item" href="#" th:href="@{/index/childDir/{name}(name=${directory.filename})}"   th:text="${directory.filename}">庐山旅行记录-江西</a>
         </td>
         <td >Initial commit</td>
         <td class="right aligned collapsing">10 hours ago</td>
     </tr>
     <tr th:each="file : ${files}">
         <td>
-            <i class="file outline  icon"></i><a href="#" th:href="@{/download/{name}(name=${file.name})}" target="_blank" class="m-black" th:text="${file.getName()}">庐山旅行记录-江西</a>
+            <i class="file outline  icon"></i><a href="#" th:href="@{/download/{name}(name=${file.filename})}" target="_blank" class="m-black" th:text="${file.filename}">庐山旅行记录-江西</a>
         </td>
-        <td th:text="${file.length()}">Initial commit</td>
+        <td th:text="${file.size}">Initial commit</td>
         <td class="right aligned">10 hours ago</td>
     </tr>
 </tbody>

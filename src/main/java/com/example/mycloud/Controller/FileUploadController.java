@@ -1,9 +1,11 @@
 package com.example.mycloud.Controller;
 
 import com.example.mycloud.Util.PathUtil;
+import com.example.mycloud.service.FileService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -24,17 +26,13 @@ import java.util.*;
 @Controller
 public class FileUploadController {
     Logger logger = LoggerFactory.getLogger(FileUploadController.class);
+    @Autowired
+    FileService fileService;
     @PostMapping("upload")
     public String upload(@RequestParam("file") MultipartFile file,HttpSession session) throws IOException {
-        String filePath = file.getOriginalFilename();
         File cur = (File) session.getAttribute("curPath");
-        File filename = new File(cur,filePath);
+        fileService.saveFile(cur,file);
 
-        logger.info("保存路径为{}",filename.getAbsolutePath());
-        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filename));
-        outputStream.write(file.getBytes());
-        outputStream.flush();
-        outputStream.close();
         return "redirect:index";
     }
 
