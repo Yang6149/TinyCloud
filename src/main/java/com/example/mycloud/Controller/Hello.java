@@ -18,20 +18,23 @@ import java.util.Stack;
 @Controller
 public class Hello {
     Logger logger = LoggerFactory.getLogger(FileUploadController.class);
-    Stack<File> stack = new Stack<>();
     @GetMapping("/index")
     public String index(HttpSession session, Model model){
         if (session.getAttribute("curPath")==null){
             File init = new File("repo");
             session.setAttribute("curPath",init );
+            Stack stack = new Stack<>();
+            session.setAttribute("stack",stack);
             stack.add(init);
+
         }
-        logger.info(stack.toString());
+        logger.info("当前线程id为:{}",Thread.currentThread().getId());
+        logger.info(session.getAttribute("stack").toString());
         File curPath= (File) session.getAttribute("curPath");
         List<List<File>>list = PathUtil.getChildDirectoryAndFile(curPath);
         model.addAttribute("directorys",list.get(0));
         model.addAttribute("files",list.get(1));
-        model.addAttribute("stack",stack);
+        model.addAttribute("stack",session.getAttribute("stack"));
         return "success";
     }
 
@@ -39,7 +42,7 @@ public class Hello {
     public String childDir(@PathVariable("name") String name, HttpSession session){
         logger.info(name);
         File f = PathUtil.getOneDirect((File)session.getAttribute("curPath"),name);
-        stack.add(f);
+        ((Stack)session.getAttribute("stack")).add(f);
         session.setAttribute("curPath",f);
         logger.info("进入下一子目录 {}",f.getName());
         return "redirect:/index";
@@ -48,7 +51,7 @@ public class Hello {
 
     @GetMapping("/lastPath")
     public String lastPath(HttpSession session){
-        stack.pop();
+        ((Stack)session.getAttribute("stack")).pop();
         File f = (File)session.getAttribute("curPath");
         session.setAttribute("curPath",f.getParentFile());
         logger.info("从{}进入父目录 {}",f.getName(),f.getParentFile().getName());
@@ -57,13 +60,13 @@ public class Hello {
 
     @GetMapping("/last/{num}")
     public String last(@PathVariable("num")String num,Model model,HttpSession session){
-        int size = stack.size();
+        int size = ((Stack)session.getAttribute("stack")).size();
         int count =size-Integer.parseInt(num);
         logger.info("进入第{}个界面",count);
         while (count-->1){
-            stack.pop();
+            ((Stack)session.getAttribute("stack")).pop();
         }
-        session.setAttribute("curPath",stack.peek());
+        session.setAttribute("curPath",((Stack)session.getAttribute("stack")).peek());
         return "redirect:/index";
     }
 
@@ -76,5 +79,10 @@ public class Hello {
         }
         return "redirect:index";
     }
+
+//    @PostMapping("/delete")
+//    public String deleteFile(){
+//        return
+//    }
 
 }

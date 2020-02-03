@@ -41,12 +41,12 @@ public class FileUploadController {
 
 
     @GetMapping("/download/{name}")
-    //@RequestMapping("/download")
     public ResponseEntity download(@PathVariable("name")String name ,HttpSession session ) throws IOException {
         FileSystemResource file = new FileSystemResource(session.getAttribute("curPath")+File.separator+name);
         HttpHeaders headers = new HttpHeaders();
         //在响应头中添加这个，设置下载文件默认的名称
         headers.add("Content-Disposition","attachment");
+        logger.info("当前线程id为:{}",Thread.currentThread().getId());
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(file.contentLength())
