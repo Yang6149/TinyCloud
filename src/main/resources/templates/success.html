@@ -8,11 +8,12 @@
 <body>
 
 <h3>主界面</h3>
-<div><a href="/lastPath" th:if="${deep}!=0">返回上一级</a></div>
+<div><a href="/lastPath" th:if="${stack.size()}!=1">返回上一级</a></div>
+<div class="" th:each="path,iterStat: ${stack}">/<a a href="/#" th:href="@{/last/{num}(num=${iterStat.index})}" th:text="${path.name}">a</a></div>
+
 <div class="ui attached segment">
     <p>目录</p>
     <div class="ui padded vertical segment m-padded-tb-large" th:each="directory : ${directorys}">
-        <!--mobile reversed反序-->
         <div class="ui middle aligned grid mobile reversed stackable" >
             <div class="eleven wide column">
 
@@ -22,7 +23,6 @@
     </div>
     <p>文件</p>
     <div class="ui padded vertical segment m-padded-tb-large" th:each="file : ${files}">
-        <!--mobile reversed反序-->
         <div class="ui middle aligned grid mobile reversed stackable" >
             <div class="eleven wide column">
 
@@ -34,8 +34,8 @@
         <!--mobile reversed反序-->
         <div class="ui middle aligned grid mobile reversed stackable" >
             <form method="POST" action="/upload" enctype="multipart/form-data">
-                <input type="file" name="file" value="请选择文件" />
-                <button type="submit" >提交</button>
+                <input class="ui" type="file" name="file" value="请选择文件" />
+                <button class="ui button" type="submit" >提交</button>
             </form>
         </div>
     </div>
