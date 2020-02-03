@@ -37,14 +37,14 @@
             <i class="folder icon"></i><a class="item" href="#" th:href="@{/index/childDir/{name}(name=${directory.filename})}"   th:text="${directory.filename}">庐山旅行记录-江西</a>
         </td>
         <td >Initial commit</td>
-        <td class="right aligned collapsing">10 hours ago</td>
+        <td class="right aligned collapsing"><form method="GET" th:action="@{/delete/{id}(id=${directory.id})}"><button class="ui inverted red button" type="submit">Delete</button></form></td>
     </tr>
     <tr th:each="file : ${files}">
         <td>
             <i class="file outline  icon"></i><a href="#" th:href="@{/download/{name}(name=${file.filename})}" target="_blank" class="m-black" th:text="${file.filename}">庐山旅行记录-江西</a>
         </td>
         <td th:text="${file.size}">Initial commit</td>
-        <td class="right aligned">10 hours ago</td>
+        <td class="right aligned"><form method="GET" th:action="@{/delete/{id}(id=${file.id})}"><button class="ui inverted red button" type="submit">Delete</button></form></td>
     </tr>
 </tbody>
 </table>

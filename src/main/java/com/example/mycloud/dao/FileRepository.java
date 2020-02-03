@@ -11,6 +11,4 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<FileBasic,Long> {
     public void deleteByPathAndDir(String path,Boolean isdir);
     public List<FileBasic> findAllByParent(String parent);
-    public FileBasic getByPathAndDir(String path,Boolean dir);
-    //public FileBasic getByPathAndDirIsFalse(String path,Boolean dir);
 }

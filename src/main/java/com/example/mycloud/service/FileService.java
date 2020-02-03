@@ -17,13 +17,12 @@ public interface FileService {
     //保存
     public void saveFile(File f, MultipartFile file) throws IOException;
     //删除
-    public void deleteFile(File f);
+    public void deleteById(long i);
     //getFile
     //get One
-    public FileBasic getOneFile(File parent,String child);
-    public FileBasic getOneDir(File parent,String child);
     public List<List<FileBasic>> getAllDisp(File f);
     public List<FileBasic> getAll(File f);
     public void mkdir(File f);
+
 
 }

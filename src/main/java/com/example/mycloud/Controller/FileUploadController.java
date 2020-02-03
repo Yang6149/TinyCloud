@@ -52,15 +52,13 @@ public class FileUploadController {
                 .body(new InputStreamResource(file.getInputStream()));
     }
     @Test
-    public void test(){
-        File ff = new File("C:\\Users\\hasaki\\Desktop\\bc");
-
-        for (File file : ff.listFiles()) {
-            if (file.isDirectory()){
-                System.out.println("this is directory " + file.getName());
-            }else {
-                System.out.println("`````` this  is a file "+ file.getName());
-            }
+    public void test() throws IOException {
+        File ff = new File("C:\\Users\\hasaki\\Desktop\\www");
+        if (ff.exists()){
+            System.out.println(ff.delete());
+            System.out.println("exist");
+        }else {
+            System.out.println("not exist");
         }
     }
 }

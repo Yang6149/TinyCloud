@@ -32,23 +32,19 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void deleteFile(File f) {
-        fileRepository.deleteByPathAndDir(f.getPath(),f.isDirectory());
+    public void deleteById(long i) {
+        FileBasic fileBasic = fileRepository.getOne(i);
+        File file = new File(fileBasic.getPath());
+
+        if (file.delete()){
+            fileRepository.deleteById(i);
+        }
     }
 
 
 
-    @Override
-    public FileBasic getOneFile(File parent, String child) {
-        File file = new File(parent,child);
-        //return fileRepository.getByPathAndDirIsFalse(file.getPath(),false);
-        return null;
-    }
-    @Override
-    public FileBasic getOneDir(File parent, String child) {
-        File file = new File(parent,child);
-        return fileRepository.getByPathAndDir(file.getPath(),true);
-    }
+
+
 
     @Override
     public List<List<FileBasic>> getAllDisp(File f) {

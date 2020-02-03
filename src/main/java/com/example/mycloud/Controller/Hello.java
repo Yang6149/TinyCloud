@@ -3,6 +3,7 @@ package com.example.mycloud.Controller;
 import com.example.mycloud.Model.FileBasic;
 import com.example.mycloud.Util.PathUtil;
 import com.example.mycloud.service.FileService;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,12 @@ public class Hello {
         File newfile = new File(cur,dir);
         fileService.mkdir(newfile);
         return "redirect:index";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id")String id){
+        fileService.deleteById(Long.valueOf(id));
+        return "redirect:/index";
     }
 
 //    @PostMapping("/delete")

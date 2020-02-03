@@ -11,7 +11,7 @@ import javax.persistence.Id;
 public class FileBasic {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String Filename;
     private String size;
     private String path;
