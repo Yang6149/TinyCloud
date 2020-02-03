@@ -7,9 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
 
@@ -63,6 +65,16 @@ public class Hello {
         }
         session.setAttribute("curPath",stack.peek());
         return "redirect:/index";
+    }
+
+    @PostMapping("/create")
+    public String mkdir(String dir,HttpSession session) throws IOException {
+        File cur = (File) session.getAttribute("curPath");
+        File newfile = new File(cur,dir);
+        if (!newfile.exists()){
+            newfile.mkdir();
+        }
+        return "redirect:index";
     }
 
 }
