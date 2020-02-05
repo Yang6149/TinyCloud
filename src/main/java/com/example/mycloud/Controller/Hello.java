@@ -24,6 +24,16 @@ public class Hello {
     Logger logger = LoggerFactory.getLogger(FileUploadController.class);
     @Autowired
     FileService fileService;
+    static{
+        File init = new File("repo");
+        if (!init.exists()){
+            init.mkdir();
+        }
+    }
+    @GetMapping("/")
+    public String toIndex(){
+        return "redirect:index";
+    }
     @GetMapping("/index")
     public String index(HttpSession session, Model model){
         if (session.getAttribute("curPath")==null){
