@@ -4,6 +4,8 @@ import com.example.mycloud.Model.FileBasic;
 import com.example.mycloud.Util.FileUtil;
 import com.example.mycloud.Util.MD5util;
 import com.example.mycloud.dao.FileRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,13 +13,20 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class FileServiceImpl implements FileService {
+    Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
     @Autowired
     private FileRepository fileRepository ;
     @Override
     public void saveFile(File f, MultipartFile file) throws IOException {
+        if (file.isEmpty()){
+            logger.warn("收到文件为空");
+            return;
+        }
         String filePath = file.getOriginalFilename();
+        logger.info(filePath);
         File filename = new File(f,filePath);
 
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filename));
