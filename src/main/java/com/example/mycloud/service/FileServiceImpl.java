@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,24 +23,38 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private FileRepository fileRepository ;
     @Override
-    public void saveFile(File f, MultipartFile file) throws IOException {
+    public void saveFile(File f, MultipartFile file,String md5) throws IOException {
         if (file.isEmpty()){
             logger.warn("收到文件为空");
             return;
         }
         String filePath = file.getOriginalFilename();
         logger.info(filePath);
-        File filename = new File(f,filePath);
+        File temp = new File(f,filePath);
+        Path filename = temp.toPath();
+        Files.write(filename,file.getBytes());
+        FileBasic res = new FileBasic();
+        res.setFilename(filePath);
+        res.setSize(FileUtil.toReadSize(file.getSize()));
+        res.setPath(temp.getPath());
+        res.setMd5(md5);
+        res.setDir(false);
+        res.setParent(f.getPath());
+        res.setCreateTime(new Date());
 
-        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filename));
-        outputStream.write(file.getBytes());
-        outputStream.flush();
-        outputStream.close();
+        fileRepository.save(res);
+    }
 
-        FileBasic fileBasic = new FileBasic();
-        file2Basic(filename,fileBasic);
-
-        fileRepository.save(fileBasic);
+    @Override
+    public void saveFile(File f, String md5) throws IOException {
+        FileBasic res = new FileBasic();
+        res.setFilename(f.getName());
+        res.setSize(FileUtil.toReadSize(f.length()));
+        res.setPath(f.getPath());
+        res.setMd5(md5);
+        res.setDir(false);
+        res.setParent(f.getParent());
+        res.setCreateTime(new Date());
     }
 
     @Override
@@ -89,13 +106,18 @@ public class FileServiceImpl implements FileService {
 
     }
 
+    @Override
+    public FileBasic getByMd5(String dm5) {
+        return fileRepository.getByMd5(dm5);
+    }
+
 
     public void file2Basic(File f,FileBasic fileBasic){
         fileBasic.setDir(f.isDirectory());
         fileBasic.setFilename(f.getName());
         fileBasic.setPath(f.getPath());
         fileBasic.setParent(f.getParent());
-        fileBasic.setDm5(MD5util.code(f.getName()));
+        fileBasic.setMd5(MD5util.code(f.getName()));
         fileBasic.setSize(FileUtil.toReadSize(f.length()));
     }
 }

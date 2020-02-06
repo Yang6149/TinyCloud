@@ -28,13 +28,13 @@ public class FileUploadController {
     Logger logger = LoggerFactory.getLogger(FileUploadController.class);
     @Autowired
     FileService fileService;
-    @PostMapping("upload")
-    public String upload(@RequestParam("file") MultipartFile file,HttpSession session) throws IOException {
-        File cur = (File) session.getAttribute("curPath");
-        fileService.saveFile(cur,file);
-
-        return "redirect:index";
-    }
+//    @PostMapping("upload")
+//    public String upload(@RequestParam("file") MultipartFile file,HttpSession session) throws IOException {
+//        File cur = (File) session.getAttribute("curPath");
+//        //fileService.saveFile(cur,file);
+//
+//        return "redirect:index";
+//    }
 
 
 

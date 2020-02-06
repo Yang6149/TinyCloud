@@ -15,7 +15,8 @@ import java.util.List;
 public interface FileService {
 
     //保存
-    public void saveFile(File f, MultipartFile file) throws IOException;
+    public void saveFile(File f, MultipartFile file,String md5) throws IOException;
+    public void saveFile(File f,String md5) throws IOException;
     //删除
     public void deleteById(long i);
     //getFile
@@ -23,6 +24,6 @@ public interface FileService {
     public List<List<FileBasic>> getAllDisp(File f);
     public List<FileBasic> getAll(File f);
     public void mkdir(File f);
-
+    public FileBasic getByMd5(String dm5);
 
 }

@@ -17,8 +17,8 @@ public class ControllerExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public ModelAndView exceptionHandler(HttpServletRequest request, Exception e) throws Exception {
 
-        logger.error("Request URL+{},Exception {}",request.getRequestURL(),e );
-
+        //logger.error("Request URL+{},Exception {}",request.getRequestURL(),e );
+        logger.error("Exception {}",e);
         if(AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class)!=null){
             throw e;
         }
