@@ -37,6 +37,5 @@ public class CleanPieceSchedual {
 
     @Test
     public void test(){
-        cleanPiece();
     }
 }
