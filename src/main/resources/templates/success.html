@@ -170,11 +170,12 @@
                     $('#md5'+file.id).html((percentage*100).toFixed()+'%');
                 })
                 .then(function (fileMd5) {
+                    console.log(fileMd5);
                     file_md5 = fileMd5;
                     log("MD5计算完成。");
                     console.log("file_md5:"+file_md5);
                     // 检查是否有已经上传成功的分片文件
-                    $.post("/check", {fileMD5: file_md5}, function (response) {
+                    $.post("/check", {fileMD5: fileMd5}, function (response) {
 
                         console.log(response);
                         log(response.msg);
@@ -205,6 +206,7 @@
                         // data = JSON.parse(data);
                         // 如果有对应的分片，推入数组
                         if (response.exist) {
+                            console.log("已经c存在");
                             deferred.reject();
 
                             // deferred.reject();
@@ -271,8 +273,16 @@
         // var deferred = WebUploader.Deferred();
         data.chunks = block.chunks;
         data.chunk = block.chunk;
-        data.chunkMD5 = block.chunkMD5;
+        if (block.chunkMD5==undefined){
+            console.log(file_md5);
+            data.chunkMD5 = file_md5;
+            file_md5=null;
+        }else {
+            data.chunkMD5 = block.chunkMD5;
+
+        }
         data.fileMD5 = file_md5;
+
     });
 
     // 上传完成后触发
