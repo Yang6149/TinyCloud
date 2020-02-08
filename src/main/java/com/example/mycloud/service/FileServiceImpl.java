@@ -55,6 +55,7 @@ public class FileServiceImpl implements FileService {
         res.setDir(false);
         res.setParent(f.getParent());
         res.setCreateTime(new Date());
+        fileRepository.save(res);
     }
 
     @Override

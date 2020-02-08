@@ -16,4 +16,5 @@ public class TempFile {
     private String title;
     private String TDM5;
     private String path;
+    private String tempPath;
 }

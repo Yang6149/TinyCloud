@@ -17,7 +17,7 @@ spring:
     #database-platform: com.yang.blog.util.MysqlConfig
     hibernate:
       ddl-auto: update #update会根据类中的结构修改数据库中表的结构
-    show-sql: true #在控制台输出sql语句
+    show-sql: false #在控制台输出sql语句
     #database-platform: org.hibernate.dialect.MySQLDialect
 logging:
   level:

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
+@Transactional
 public class TempFileServiceImpl implements TempFileService {
     @Autowired
     TempFileRepository tempFileRepository;
@@ -25,14 +27,14 @@ public class TempFileServiceImpl implements TempFileService {
     }
     @Override
     public void saveTempFile(File file, MultipartFile multipartFile, String md5, int chunk ,String name) {
-        File dir = new File("piece/" + name +".tmp");
+        File dir = new File("piece"+File.separator + name +".tmp");
         if (!dir.exists()) {//如果文件夹不存在
             dir.mkdir();//创建文件夹
         }
         byte[] bytes = new byte[0];
         try {
             bytes = multipartFile.getBytes();
-            Path path = Paths.get("piece/" + name +".tmp/" + chunk);
+            Path path = Paths.get("piece"+File.separator  + name +".tmp"+File.separator  + chunk);
             Files.write(path,bytes);
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,7 +43,8 @@ public class TempFileServiceImpl implements TempFileService {
         TempFile tempFile = new TempFile();
         tempFile.setTitle(Integer.toString(chunk));
         tempFile.setTDM5(md5);
-        tempFile.setPath(file.getPath()+"/"+name);
+        tempFile.setPath(file.getPath()+File.separator +name);
+        tempFile.setTempPath("piece"+File.separator  + name +".tmp"+File.separator  + chunk);
         tempFileRepository.save(tempFile);
 
     }
@@ -56,5 +59,15 @@ public class TempFileServiceImpl implements TempFileService {
     public TempFile findByMD5(String md5) {
 
         return tempFileRepository.findByTDM5(md5);
+    }
+
+    @Override
+    public TempFile findByCurPath(String path) {
+        return tempFileRepository.findByTempPath(path);
+    }
+
+    @Override
+    public void removeByTempPath(String temp_path) {
+        tempFileRepository.removeByTempPath(temp_path);
     }
 }

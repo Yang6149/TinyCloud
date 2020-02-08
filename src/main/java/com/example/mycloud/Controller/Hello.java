@@ -2,6 +2,7 @@ package com.example.mycloud.Controller;
 
 import com.example.mycloud.Model.FileBasic;
 import com.example.mycloud.Util.PathUtil;
+import com.example.mycloud.schedual.CleanPieceSchedual;
 import com.example.mycloud.service.FileService;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -29,7 +30,12 @@ public class Hello {
         if (!init.exists()){
             init.mkdir();
         }
+        File piece = new File("piece");
+        if (!piece.exists()){
+            piece.mkdir();
+        }
     }
+    @Autowired
     @GetMapping("/")
     public String toIndex(){
         return "redirect:index";

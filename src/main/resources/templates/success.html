@@ -10,11 +10,13 @@
     <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
 <!--    <link rel="stylesheet"  href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/webuploader-0.1.5/webuploader.css" th:href="@{/static/webuploader-0.1.5/webuploader.css}">
     <link rel="stylesheet" href="../static/webuploader-0.1.5/webuploader.css" th:href="@{/webuploader-0.1.5/webuploader.css}">
     <!--引入JS-->
 <!--    <script type="text/javascript" src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}" ></script>-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<!--    <script src="../static/webuploader-0.1.5/webuploader.js" th:src="/webuploader-0.1.5/webuploader.js"></script>-->
+    <script src="../static/webuploader-0.1.5/webuploader.js" th:src="@{/static/webuploader-0.1.5/webuploader.js}"></script>
+    <script src="../static/webuploader-0.1.5/webuploader.js" th:src="@{/webuploader-0.1.5/webuploader.js}"></script>
 </head>
 <body>
 <nav class="ui inverted attached segment segment  m-shadow-small">
@@ -54,31 +56,30 @@
     </tr>
 </tbody>
 </table>
-<div class="ui attached segment">
+<!--<div class="ui attached segment">-->
+<!--    <div class="ui padded vertical segment m-padded-tb-large" >-->
+<!--        &lt;!&ndash;mobile reversed反序&ndash;&gt;-->
+<!--        <div class="ui middle aligned grid mobile reversed stackable" >-->
+<!--            <div class="ui center aligned compact segment">-->
+<!--                <form method="POST" action="/upload" enctype="multipart/form-data">-->
+<!--                    <div class="ui inverted black button"><input class="ui file" type="file" name="file" value="请选择文件" /></div>-->
 
-    <div class="ui padded vertical segment m-padded-tb-large" >
-        <!--mobile reversed反序-->
-        <div class="ui middle aligned grid mobile reversed stackable" >
-            <div class="ui center aligned compact segment">
-                <form method="POST" action="/upload" enctype="multipart/form-data">
-                    <div class="ui inverted black button"><input class="ui file" type="file" name="file" value="请选择文件" /></div>
 
+<!--                    <button class="ui button" type="submit" >提交</button>-->
+<!--                </form>-->
+<!--                <div class="ui horizontal divider"></div>-->
 
-                    <button class="ui button" type="submit" >提交</button>
-                </form>
-                <div class="ui horizontal divider"></div>
-
-                <form method="POST" action="/create">
-                    <div class="ui left icon action input">
-                        <i class="add icon"></i>
-                        <input type="text" name="dir" placeholder="dir">
-                        <button class="ui blue submit button" type="submit">创建新目录</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<!--                <form method="POST" action="/create">-->
+<!--                    <div class="ui left icon action input">-->
+<!--                        <i class="add icon"></i>-->
+<!--                        <input type="text" name="dir" placeholder="dir">-->
+<!--                        <button class="ui blue submit button" type="submit">创建新目录</button>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <div class="container">
     <div class="row">
@@ -124,6 +125,22 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">创建目录</div>
+                <div class="panel-body">
+                    <form method="POST" action="/create">
+                        <div class="ui left icon action input">
+                            <i class="add icon"></i>
+                            <input type="text" name="dir" placeholder="dir">
+                            <button class="ui blue submit button" type="submit">创建新目录</button>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
+        </div>
     </div>
 </div>
 
@@ -157,13 +174,14 @@
                     log("MD5计算完成。");
                     console.log("file_md5:"+file_md5);
                     // 检查是否有已经上传成功的分片文件
-                    $.post('/check', {fileMD5: file_md5}, function (response) {
+                    $.post("/check", {fileMD5: file_md5}, function (response) {
 
                         console.log(response);
                         log(response.msg);
                         // data = JSON.parse(data);
                         // 如果有对应的分片，推入数组
                         if (response.exist) {
+                            console.log("已经c存在")
                             uploader.skipFile(file);
                             secSend = true;
                             // deferred.reject();
@@ -174,7 +192,7 @@
             return deferred.promise();
         },
         beforeSend:function (block) {
-            console.log(block);
+
             var me = this,
                 owner = this.owner,
                 blob = block.blob,
@@ -182,8 +200,18 @@
             file_chunks = block.chunks;
             if(block.chunks>1){
                 uploader.md5File(block.blob).then(function (value) {
-                    chunk_md5 = value;
-                    deferred.resolve();
+                    block.chunkMD5=value;
+                    $.post("/checkPiece", {fileMD5: value}, function (response) {
+                        // data = JSON.parse(data);
+                        // 如果有对应的分片，推入数组
+                        if (response.exist) {
+                            deferred.reject();
+
+                            // deferred.reject();
+                        }else {
+                            deferred.resolve();
+                        }
+                    })
                 })
             }else {
                 deferred.resolve();
@@ -192,14 +220,13 @@
         },
         afterSendFile:function (file) {
             var deferred = WebUploader.Deferred();
+            console.log(file_chunks);
+            console.log(secSend);
             console.log(file_chunks>1 && !secSend);
             //判断是否要分片
             if(file_chunks>1 && !secSend){
                 $.post('/merge', { fileMD5: file_md5, fileName: file.name }, function (data) {
                     // var object = JSON.parse(data);
-
-                    log(data.msg);
-
                     deferred.resolve();
                 });
             }else {
@@ -210,7 +237,7 @@
     })
     // 创建上传
     uploader = WebUploader.create({
-        swf: '/webuploader-0.1.5/Uploader.swf',
+        swf: '/static/webuploader-0.1.5/Uploader.swf',
         server: '/upload',          // 服务端地址
         pick: '#picker',              // 指定选择文件的按钮容器
         resize: false,
@@ -244,7 +271,7 @@
         // var deferred = WebUploader.Deferred();
         data.chunks = block.chunks;
         data.chunk = block.chunk;
-        data.chunkMD5 = chunk_md5;
+        data.chunkMD5 = block.chunkMD5;
         data.fileMD5 = file_md5;
     });
 

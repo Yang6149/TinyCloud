@@ -13,5 +13,7 @@ public interface TempFileService {
     //根据md5查找对象
     public TempFile findByMD5(String md5);
 
+    public TempFile findByCurPath(String path);
 
+    public void removeByTempPath(String temp_path);
 }

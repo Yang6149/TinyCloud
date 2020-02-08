@@ -8,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -25,7 +24,8 @@ public class TestWebUploader {
     @Autowired
     TempFileService tempFileService;
 
-    @PostMapping("/check")
+    @RequestMapping(value = "/check",method= RequestMethod.POST)
+    @ResponseBody
     public Map<String,Object> fileCheck(@RequestParam("fileMD5") String md5){
         //检查是否有相同的dm相同的文件
         Map<String,Object> res = new HashMap<>();
@@ -41,6 +41,7 @@ public class TestWebUploader {
         return res;
     }
     @PostMapping("/checkPiece")
+    @ResponseBody
     public Map<String,Object> fileCheckpiece(@RequestParam("fileMD5") String md5){
         //检查是否有相同的dm相同的文件
         Map<String,Object> res = new HashMap<>();
@@ -59,6 +60,7 @@ public class TestWebUploader {
 
     //上传，当为单个文件时，fileMD5=chunkMD5
     @PostMapping("/upload")
+    @ResponseBody
     public Map<String,String> fileUpload(@RequestParam("file") MultipartFile file,
                              @RequestParam(value = "chunks",required = false) int chunks,
                              @RequestParam(value = "chunk") int chunk,
@@ -88,8 +90,8 @@ public class TestWebUploader {
 
     //合并文件
     @PostMapping("/merge")
+    @ResponseBody
     public Map<String, String> fileMerge(@RequestParam("fileMD5") String md5, @RequestParam("fileName") String fileName){
-        logger.info("开始merge {}",fileName);
         File dir = new File("piece/"+fileName+".tmp");
         if (dir.exists()){
             File[] files = dir.listFiles();
@@ -105,20 +107,26 @@ public class TestWebUploader {
             });
             String outName="";
             if (files.length>1){
-                outName=files[0].getPath();
+                String a=files[0].getPath();
+
+                TempFile b = tempFileService.findByCurPath(a);
+                outName=b.getPath();
             }
             try {
                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outName,true));
-
                 for (File file:files){
                     BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
                     int len = -1;
                     byte[] bytes = new byte[1*1024*1024];
+
                     while((len = in.read(bytes))!=-1) {
-                        out.write(bytes, 0, len);
+
+                        out.write(bytes);
                     }
                     in.close();
                     tempFileService.removeByTitleAndPath(file.getName(),outName);
+                    logger.info("融合完成 {}" ,file.getName());
+
                     file.delete();
                 }
                 out.close();

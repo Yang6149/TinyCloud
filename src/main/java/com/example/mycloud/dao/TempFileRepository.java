@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TempFileRepository extends JpaRepository<TempFile,Long> {
     public TempFile findByTDM5(String md5);
     public void removeByTitleAndPath(String title,String Path);
+    public TempFile findByTempPath(String path);
+    public void removeByTempPath(String temp_path);
 }
